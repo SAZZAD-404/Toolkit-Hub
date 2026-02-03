@@ -1,0 +1,136 @@
+<svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f23;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Glow effects -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Neural gradients -->
+    <linearGradient id="neuralBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="neuralPink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f472b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fb7185;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#f8fafc;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:0.4" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGradient)"/>
+  
+  <!-- Ambient glow background -->
+  <circle cx="256" cy="256" r="200" fill="url(#neuralBlue)" opacity="0.1" filter="url(#strongGlow)"/>
+  <circle cx="256" cy="256" r="150" fill="url(#neuralPink)" opacity="0.08" filter="url(#strongGlow)"/>
+  
+  <!-- Neural Network Diamond Pattern -->
+  <g transform="translate(256,256)">
+    
+    <!-- Outer diamond connections -->
+    <g stroke="url(#neuralBlue)" strokeWidth="4" fill="none" filter="url(#glow)">
+      <!-- Vertical diamond -->
+      <path d="M0,-120 L60,-60 L0,0 L-60,-60 Z" opacity="0.8"/>
+      <path d="M0,0 L60,60 L0,120 L-60,60 Z" opacity="0.8"/>
+      
+      <!-- Horizontal diamond -->
+      <path d="M-120,0 L-60,-60 L0,0 L-60,60 Z" opacity="0.8"/>
+      <path d="M0,0 L60,-60 L120,0 L60,60 Z" opacity="0.8"/>
+    </g>
+    
+    <!-- Inner diamond connections -->
+    <g stroke="url(#neuralPink)" strokeWidth="3" fill="none" filter="url(#glow)">
+      <!-- Cross pattern -->
+      <path d="M0,-80 L40,-40 L0,0 L-40,-40 Z" opacity="0.9"/>
+      <path d="M0,0 L40,40 L0,80 L-40,40 Z" opacity="0.9"/>
+      <path d="M-80,0 L-40,-40 L0,0 L-40,40 Z" opacity="0.9"/>
+      <path d="M0,0 L40,-40 L80,0 L40,40 Z" opacity="0.9"/>
+    </g>
+    
+    <!-- Neural connection lines -->
+    <g stroke="rgba(139,92,246,0.6)" strokeWidth="2" fill="none">
+      <!-- Radiating lines -->
+      <line x1="0" y1="-120" x2="0" y2="-80"/>
+      <line x1="0" y1="80" x2="0" y2="120"/>
+      <line x1="-120" y1="0" x2="-80" y2="0"/>
+      <line x1="80" y1="0" x2="120" y2="0"/>
+      
+      <!-- Diagonal connections -->
+      <line x1="-85" y1="-85" x2="-60" y2="-60"/>
+      <line x1="60" y1="-60" x2="85" y2="-85"/>
+      <line x1="-85" y1="85" x2="-60" y2="60"/>
+      <line x1="60" y1="60" x2="85" y2="85"/>
+    </g>
+    
+    <!-- Neural nodes -->
+    <g fill="url(#neuralBlue)" filter="url(#glow)">
+      <!-- Outer nodes -->
+      <circle cx="0" cy="-120" r="8" opacity="0.9"/>
+      <circle cx="0" cy="120" r="8" opacity="0.9"/>
+      <circle cx="-120" cy="0" r="8" opacity="0.9"/>
+      <circle cx="120" cy="0" r="8" opacity="0.9"/>
+      
+      <!-- Diagonal nodes -->
+      <circle cx="-85" cy="-85" r="6" opacity="0.8"/>
+      <circle cx="85" cy="-85" r="6" opacity="0.8"/>
+      <circle cx="-85" cy="85" r="6" opacity="0.8"/>
+      <circle cx="85" cy="85" r="6" opacity="0.8"/>
+    </g>
+    
+    <!-- Inner neural nodes -->
+    <g fill="url(#neuralPink)" filter="url(#glow)">
+      <!-- Mid-range nodes -->
+      <circle cx="0" cy="-80" r="6" opacity="0.9"/>
+      <circle cx="0" cy="80" r="6" opacity="0.9"/>
+      <circle cx="-80" cy="0" r="6" opacity="0.9"/>
+      <circle cx="80" cy="0" r="6" opacity="0.9"/>
+      
+      <!-- Inner diamond nodes -->
+      <circle cx="-40" cy="-40" r="5" opacity="0.8"/>
+      <circle cx="40" cy="-40" r="5" opacity="0.8"/>
+      <circle cx="-40" cy="40" r="5" opacity="0.8"/>
+      <circle cx="40" cy="40" r="5" opacity="0.8"/>
+    </g>
+    
+    <!-- Central core -->
+    <circle cx="0" cy="0" r="20" fill="url(#coreGlow)" filter="url(#strongGlow)"/>
+    <circle cx="0" cy="0" r="12" fill="white" opacity="0.95"/>
+    <circle cx="0" cy="0" r="8" fill="url(#neuralBlue)" opacity="0.3"/>
+    
+    <!-- Pulsing ring around core -->
+    <circle cx="0" cy="0" r="25" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="none" strokeDasharray="4 4" opacity="0.6"/>
+  </g>
+  
+  <!-- Corner accent glows -->
+  <circle cx="100" cy="100" r="30" fill="url(#neuralBlue)" opacity="0.05" filter="url(#glow)"/>
+  <circle cx="412" cy="100" r="30" fill="url(#neuralPink)" opacity="0.05" filter="url(#glow)"/>
+  <circle cx="100" cy="412" r="30" fill="url(#neuralPink)" opacity="0.05" filter="url(#glow)"/>
+  <circle cx="412" cy="412" r="30" fill="url(#neuralBlue)" opacity="0.05" filter="url(#glow)"/>
+</svg>
