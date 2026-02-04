@@ -68,6 +68,17 @@ export function getRandomStabilityKey(): string {
   return keys[Math.floor(Math.random() * keys.length)];
 }
 
+export function getRandomA4FKey(): string {
+  const keys = [
+    process.env.A4F_API_KEY_1,
+    process.env.A4F_API_KEY_2,
+    process.env.A4F_API_KEY_3,
+  ].filter(Boolean) as string[];
+  
+  if (keys.length === 0) return '';
+  return keys[Math.floor(Math.random() * keys.length)];
+}
+
 export function getRandomElevenLabsKey(): string {
   const keys = [
     process.env.ELEVENLABS_API_KEY_1,

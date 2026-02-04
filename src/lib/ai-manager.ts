@@ -30,7 +30,7 @@ export interface ProviderConfig {
 }
 
 export type TextGenProvider = 'openrouter' | 'gemini' | 'github' | 'groq' | 'openai' | 'cerebras' | 'xai' | 'deepseek' | 'anthropic' | 'perplexity' | 'together' | 'mistral' | 'huggingface' | 'cohere' | 'gigachat';
-export type ImageGenProvider = 'stability' | 'deapi' | 'replicate';
+export type ImageGenProvider = 'stability' | 'a4f' | 'deapi' | 'replicate';
 export type TTSProvider = 'elevenlabs' | 'deapi';
 
 // ==========================================
@@ -194,12 +194,21 @@ const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     rateLimitDelay: 3000,
     maxRetries: 3
   },
+  a4f: {
+    name: 'A4F',
+    baseUrl: 'https://api.a4f.co/v1',
+    models: ['provider-4/imagen-3.5', 'provider-4/imagen-4'],
+    keyPrefix: 'A4F_API_KEY',
+    priority: 2,
+    rateLimitDelay: 2000,
+    maxRetries: 3
+  },
   deapi: {
     name: 'DEAPI',
     baseUrl: 'https://api.deapi.ai/api/v1/client',
     models: ['flux-1.1-pro', 'flux-1-schnell'],
     keyPrefix: 'DEAPI_API_KEY',
-    priority: 2,
+    priority: 3,
     rateLimitDelay: 2000,
     maxRetries: 3
   },
@@ -208,7 +217,7 @@ const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     baseUrl: 'https://api.replicate.com/v1',
     models: ['stability-ai/stable-diffusion', 'black-forest-labs/flux-schnell'],
     keyPrefix: 'REPLICATE_API_TOKEN',
-    priority: 3,
+    priority: 4,
     rateLimitDelay: 3000,
     maxRetries: 3
   },
@@ -228,7 +237,7 @@ const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
 // Provider categories
 const PROVIDER_CATEGORIES = {
   TEXT_GEN: ['github', 'openrouter', 'mistral', 'gemini', 'openai', 'cerebras', 'xai', 'deepseek', 'anthropic', 'perplexity', 'together', 'huggingface', 'cohere', 'gigachat', 'groq'],
-  IMAGE_GEN: ['stability', 'deapi', 'replicate'],
+  IMAGE_GEN: ['stability', 'a4f', 'deapi', 'replicate'],
   TTS_GEN: ['elevenlabs', 'deapi']
 };
 
@@ -950,7 +959,7 @@ export const aiManager = {
   }): Promise<AIResponse<{ imageUrl: string; revisedPrompt?: string }>> {
     return generateWithImageAI(async (provider, apiKey, config) => {
       // Import functions dynamically
-      const { getRandomStabilityKey, getRandomDeapiKey } = await import('./api-keys');
+      const { getRandomStabilityKey, getRandomA4FKey, getRandomDeapiKey } = await import('./api-keys');
       
       switch (provider) {
         case 'stability':
@@ -979,6 +988,35 @@ export const aiManager = {
           return {
             imageUrl: stabilityData.image || stabilityData.artifacts?.[0]?.base64 ? 
               `data:image/png;base64,${stabilityData.artifacts[0].base64}` : '',
+            revisedPrompt: options.prompt
+          };
+
+        case 'a4f':
+          const a4fKey = getRandomA4FKey();
+          if (!a4fKey) throw new Error('A4F key not available');
+          
+          const a4fResponse = await fetch('https://api.a4f.co/v1/images/generations', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${a4fKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              prompt: options.prompt,
+              model: 'provider-8/z-image',
+              width: options.width || 1024,
+              height: options.height || 1024,
+              n: 1
+            }),
+          });
+
+          if (!a4fResponse.ok) {
+            throw new Error(`A4F API error: ${a4fResponse.status}`);
+          }
+
+          const a4fData = await a4fResponse.json();
+          return {
+            imageUrl: a4fData.data?.[0]?.url || a4fData.url || '',
             revisedPrompt: options.prompt
           };
 

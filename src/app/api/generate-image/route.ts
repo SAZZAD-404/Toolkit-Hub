@@ -28,6 +28,9 @@ async function callImageProvider(
     case 'stability':
       return await generateWithStability(apiKey, enhancedPrompt);
     
+    case 'a4f':
+      return await generateWithA4F(apiKey, enhancedPrompt);
+    
     case 'deapi':
       return await generateWithDeapi(apiKey, enhancedPrompt);
     
@@ -76,6 +79,38 @@ async function generateWithStability(apiKey: string, prompt: string): Promise<{ 
     const imageUrl = `data:image/png;base64,${imageBase64}`;
     return { imageUrl, revisedPrompt: prompt };
   }
+}
+
+// A4F implementation
+async function generateWithA4F(apiKey: string, prompt: string): Promise<{ imageUrl: string; revisedPrompt: string }> {
+  const response = await fetch('https://api.a4f.co/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      prompt,
+      model: 'provider-4/imagen-4',
+      width: 1024,
+      height: 1024,
+      n: 1
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`A4F API error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  const imageUrl = data.data?.[0]?.url || data.url;
+
+  if (!imageUrl) {
+    throw new Error('No image URL in A4F response');
+  }
+
+  return { imageUrl, revisedPrompt: prompt };
 }
 
 // DEAPI implementation
@@ -225,7 +260,7 @@ export async function GET() {
   return NextResponse.json({
     message: 'AI Image Generator API with Universal Failover',
     primaryProvider: 'Stability AI',
-    fallbackProvider: 'DEAPI',
+    fallbackProviders: ['A4F', 'DEAPI'],
     supportedStyles: [
       'Realistic', 'Anime', 'Digital Art', 'Oil Painting', 
       'Watercolor', 'Sketch', '3D Render', 'Pixel Art'
