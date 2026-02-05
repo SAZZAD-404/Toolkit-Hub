@@ -195,8 +195,6 @@ export default function TempEmailPage() {
       
       if (res.ok) {
         const data = await res.json();
-        // Avoid logging message payloads in console (can include sensitive content)
-        // console.log('Message content response:', data);
         
         if (data.success && data.message) {
           const msg = data.message;
@@ -213,13 +211,6 @@ export default function TempEmailPage() {
             textContent: msg.text || undefined,
             provider: 'mail.tm',
           };
-
-          console.log('Normalized message content:', {
-            htmlContent: !!normalizedMessage.htmlContent,
-            textContent: !!normalizedMessage.textContent,
-            htmlLength: normalizedMessage.htmlContent?.length || 0,
-            textLength: normalizedMessage.textContent?.length || 0
-          });
 
           setSelectedEmail(normalizedMessage);
         }
@@ -314,7 +305,7 @@ export default function TempEmailPage() {
   }, []);
 
   useEffect(() => {
-    if (availableDomains.length > 0 && !mailTmAccount) {
+    if (availableDomains.length > 0 && !mailTmAccount && !error) {
       createMailTmAccount();
     }
   }, [availableDomains, mailTmAccount]);

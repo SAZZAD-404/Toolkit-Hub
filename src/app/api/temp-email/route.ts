@@ -5,13 +5,9 @@ const MAIL_TM_API = "https://api.mail.tm";
 // GET /api/temp-email - Get domains or inbox
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  // Some clients mistakenly call /api/temp-email?provider=mail.tm (without action).
-  // Treat missing action as "domains" so the UI doesn't break.
   const action = searchParams.get('action') || 'domains';
   const provider = searchParams.get('provider');
   const email = searchParams.get('email');
-  // NOTE: never pass tokens via query params (Next dev logs the full URL).
-  // Prefer a header so secrets don't end up in logs.
   const token = searchParams.get('token') || request.headers.get('x-mailtm-token');
   const messageId = searchParams.get('messageId');
 
@@ -40,13 +36,10 @@ export async function GET(request: NextRequest) {
             const res = await fetch(`${MAIL_TM_API}/messages`, {
               headers: { Authorization: `Bearer ${token}` },
             });
-            // console.log('Mail.tm inbox response status:', res.status);
             if (!res.ok) {
               return NextResponse.json({ success: false, error: 'Failed to fetch Mail.tm inbox' });
             }
             const data = await res.json();
-            // Avoid logging full inbox payloads (can contain sensitive IDs)
-            // console.log('Mail.tm inbox response:', data);
             const messages = data['hydra:member'] || [];
             return NextResponse.json({ success: true, messages });
           } catch (error) {
@@ -65,13 +58,10 @@ export async function GET(request: NextRequest) {
             const res = await fetch(`${MAIL_TM_API}/messages/${messageId}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
-            console.log('Mail.tm message response status:', res.status);
             if (!res.ok) {
               return NextResponse.json({ success: false, error: 'Failed to fetch Mail.tm message' });
             }
             const data = await res.json();
-            // Avoid logging message payloads (can contain sensitive content)
-            // console.log('Mail.tm message response:', data);
             return NextResponse.json({ success: true, message: data });
           } catch (error) {
             console.error('Mail.tm message error:', error);
@@ -103,7 +93,7 @@ export async function POST(request: NextRequest) {
 
   try {
     if (action === 'create-account' && provider === 'mail.tm') {
-      // Get available domains first (best-effort)
+      // Get available domains first
       let domain = (preferredDomain || '').trim() || 'mail.tm';
       try {
         const domainRes = await fetch(`${MAIL_TM_API}/domains`);
@@ -191,8 +181,6 @@ export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const provider = searchParams.get('provider');
   const messageId = searchParams.get('messageId');
-  // NOTE: never pass tokens via query params (Next dev logs the full URL).
-  // Prefer a header so secrets don't end up in logs.
   const token = searchParams.get('token') || request.headers.get('x-mailtm-token');
 
   try {

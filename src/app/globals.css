@@ -116,10 +116,6 @@
     border-color: hsl(var(--border));
   }
 
-  * {
-    @apply border-border;
-  }
-
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
